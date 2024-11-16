@@ -11,6 +11,12 @@
     "sliderTooltip": "Giữ phím Shift để điều chỉnh chính xác.",
     "captureRequired": "Sử dụng phím tắt $1 để kích hoạt."
   },
+  "menuLabels": {
+    "invertPage": "đảo ngược trang",
+    "grayscalePage": "trang thang độ xám",
+    "videoBrightness": "độ sáng video",
+    "videoContrast": "độ tương phản video"
+  },
   "token": {
     "create": "tạo mới",
     "reset": "cài lại",
@@ -143,8 +149,6 @@
     
     "skip": "Bỏ qua AB", 
     "skipTooltip": "Bỏ qua một phân đoạn của video giữa vị trí đánh dấu và vị trí hiện tại.",
-    "detectiveMode": "chế độ thám tử",
-    "detectiveModeTooltip": "Ẩn mọi thứ trừ những gì có thể nhìn thấy qua một vòng tròn.",
     "cinema": "tối màu nền",
     "cinemaTooltip": "Làm tối nền video. Để thoát, nhấn vào nền hoặc sử dụng phím tắt một lần nữa.",
     "presets": "cài đặt sẵn...",
@@ -158,7 +162,8 @@
   "options": {
     "flags": {
       "header": "Tùy chọn",
-      "gptPromo": "Tìm kiếm các cuộc trò chuyện ChatGPT của bạn với $1.",
+      "qrCodeTop": "Quét để sử dụng trên...",
+      "qrCodeBottom": "Edge cho Android",
       "language": "ngôn ngữ",
       "_languageTooltip": "Những người dùng đã đóng góp cho bản dịch tiếng Việt: @zeref-dragneel",
       "darkTheme": "chủ đề tối",
@@ -180,6 +185,7 @@
       "customContextTooltip": "Lưu bản chụp nhanh của ngữ cảnh hiện tại của tab này. Các tab mới tạo sẽ sử dụng bản chụp này làm trạng thái ban đầu.",
       "jsShortcutWarning": "Phím tắt JavaScript hiện đang bị vô hiệu hóa do sự lỗi thời của các API cũ. Chức năng sẽ được tiếp tục khi Chromium triển khai phương thức userScripts.execute().",
       "jsRuleWarning": "Vui lòng cập nhật Chrome để hỗ trợ các quy tắc URL Javascript.",
+      "jsRuleWarningAlt": "Vui lòng bật chế độ nhà phát triển để sử dụng các tính năng JavaScript.",
       "keyboardInput": "nhập liệu bàn phím",
       "keyboardInputTooltip": "Cân nhắc chuyển sang chế độ nhập liệu ảo nếu bạn sử dụng bàn phím ảo hoặc bàn phím không theo bố cục QWERTY. Điều này chỉ áp dụng cho những thay đổi phím tắt trong tương lai và không ảnh hưởng đến các phím tắt hiện tại.",
       "qwerty": "bố cục QWERTY",
@@ -197,7 +203,11 @@
         "headerTooltip": "Đã bật widget hình tròn.",
         "showIcon": "hiển thị biểu tượng",
         "showIconTooltip": "Hiển thị biểu tượng trên menu chính để dễ dàng chuyển đổi widget hình tròn.",
-        "autoHide": "tự động ẩn"
+        "autoHide": "tự động ẩn",
+        "fullscreenOnly": "chỉ toàn màn hình",
+        "fullscreenOnlyTooltip": "Chỉ hiển thị widget khi video ở chế độ toàn màn hình.",
+        "pressAction": "hành động nhấn",
+        "togglePause": "chuyển đổi tạm dừng"
       }
     },
     "editor": {

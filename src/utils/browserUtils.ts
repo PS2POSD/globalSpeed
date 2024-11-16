@@ -20,13 +20,6 @@ export async function getLatestActiveTabInfo(): Promise<TabInfo> {
   }
 }
 
-export async function getLatestActiveTabSmart(): Promise<TabInfo> {
-  const tab = await getLatestActiveTabInfo()
-  if (!tab) return 
-  return getCorrectPane(tab)
-}
-
-
 export type TabInfo = {tabId: number, frameId?: number, windowId: number, url?: string}
 
 
@@ -39,18 +32,6 @@ export function tabToTabInfo(tab: chrome.tabs.Tab): TabInfo {
   return {tabId: tab.id, frameId: 0, windowId: tab.windowId}
 }
 
-export async function getCorrectPane(info: TabInfo) {
-  if (!info || !isEdge()) return info 
-  let key = `f:pp:${info.tabId}`
-  const tabId = (await chrome.storage.local.get(key))[key]
-  if (!tabId) return info  
-  const lk = `f:pf:${info.tabId}`, rk = `f:pf:${tabId}`;
-  const items = (await chrome.storage.local.get([lk, rk]))
-  if (items[rk] > items[lk]) {
-    return {...info, tabId}
-  }
-  return info 
-}
 
 export function senderToTabInfo(sender: chrome.runtime.MessageSender): TabInfo {
   if (!sender.tab) return 
@@ -82,5 +63,15 @@ export function setSession(override?: any) {
 }
 
 
+export async function checkContentScript(tabId: number, frameId: number) {
+  try {
+    await chrome.tabs.sendMessage(tabId, {type: "CS_ALIVE"}, {frameId: frameId || 0})
+    return true 
+  } catch (err) {}
+}
 
-
+export function isUserScriptsAvailable() {
+  try {
+    if (chrome.userScripts) return true 
+  } catch { return false }
+}

@@ -11,6 +11,12 @@
     "sliderTooltip": "Tieni premuto il tasto Shift per un controllo preciso.",
     "captureRequired": "Usa la scorciatoia $1 per attivare."
   },
+  "menuLabels": {
+    "invertPage": "inverti pagina",
+    "grayscalePage": "pagina in scala di grigi",
+    "videoBrightness": "luminosità del video",
+    "videoContrast": "contrasto del video"
+  },
   "token": {
     "create": "crea",
     "reset": "ripristina",
@@ -143,8 +149,6 @@
     
     "skip": "salta AB",
     "skipTooltip": "Salta un segmento del video tra la posizione contrassegnata e la posizione attuale.",
-    "detectiveMode": "modalità detective",
-    "detectiveModeTooltip": "Nasconde tutto tranne ciò che è visibile attraverso un cerchio.",
     "cinema": "oscura sfondo",
     "cinemaTooltip": "Oscura lo sfondo del video. Per uscire, premi sullo sfondo o usa di nuovo la scorciatoia.",
     "presets": "preimpostazioni...",
@@ -158,7 +162,8 @@
   "options": {
     "flags": {
       "header": "Opzioni",
-      "gptPromo": "Cerca nelle tue conversazioni ChatGPT con $1.",
+      "qrCodeTop": "Scansiona per usare su...",
+      "qrCodeBottom": "Edge per Android",
       "language": "lingua",
       "_languageTooltip": "Utenti che hanno contribuito alle traduzioni italiane: @albertopasqualetto",
       "darkTheme": "tema scuro",
@@ -180,6 +185,7 @@
       "customContextTooltip": "Salva uno snapshot del contesto attuale di questa scheda. Le schede create di recente utilizzeranno questo snapshot come stato iniziale.",
       "jsShortcutWarning": "Le scorciatoie JavaScript sono attualmente disabilitate a causa della deprecazione delle API più vecchie. La funzionalità riprenderà quando Chromium implementerà il metodo userScripts.execute().",
       "jsRuleWarning": "Si prega di aggiornare Chrome per supportare le regole URL di Javascript.",
+      "jsRuleWarningAlt": "Abilita la modalità sviluppatore per utilizzare le funzionalità JavaScript.",
       "keyboardInput": "input da tastiera",
       "keyboardInputTooltip": "Considerare di passare alla modalità di input virtuale se si utilizza una tastiera virtuale o una tastiera non QWERTY. Questo si applica solo ai cambiamenti futuri degli shortcut e gli shortcut esistenti non saranno interessati.",
       "qwerty": "layout QWERTY",
@@ -197,7 +203,11 @@
         "headerTooltip": "Widget circolare abilitato.",
         "showIcon": "mostra icona",
         "showIconTooltip": "Mostra un'icona nel menu principale per attivare/disattivare comodamente il widget circolare.",
-        "autoHide": "nascondimento automatico"
+        "autoHide": "nascondimento automatico",
+        "fullscreenOnly": "solo a schermo intero",
+        "fullscreenOnlyTooltip": "Mostra il widget solo quando il video è a schermo intero.",
+        "pressAction": "azione di pressione",
+        "togglePause": "attiva/disattiva pausa"
       }
     },
     "editor": {

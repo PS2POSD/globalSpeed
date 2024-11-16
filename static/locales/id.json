@@ -11,6 +11,12 @@
     "sliderTooltip": "Tahan tombol shift untuk kontrol presisi.",
     "captureRequired": "Gunakan pintasan $1 untuk mengaktifkan."
   },
+  "menuLabels": {
+    "invertPage": "balik halaman",
+    "grayscalePage": "halaman skala abu-abu",
+    "videoBrightness": "kecerahan video",
+    "videoContrast": "kontras video"
+  },
   "token": {
     "create": "buat",
     "reset": "atur ulang",
@@ -134,8 +140,6 @@
     "intoPopupTooltip": "Ubah tab saat ini menjadi jendela popup.",
     "skip": "skip AB",
     "skipTooltip": "Lewati segmen video antara posisi yang ditandai dan posisi saat ini.",
-    "detectiveMode": "mode detektif",
-    "detectiveModeTooltip": "Sembunyikan semuanya kecuali yang terlihat melalui lingkaran.",
     "cinema": "gelapkan latar belakang",
     "cinemaTooltip": "Gelapkan latar belakang video. Untuk keluar, tekan latar belakang atau gunakan pintasan lagi.",
     "presets": "preset...",
@@ -149,7 +153,8 @@
   "options": {
     "flags": {
       "header": "Opsi",
-      "gptPromo": "Cari percakapan ChatGPT Anda dengan $1.",
+      "qrCodeTop": "Pindai untuk digunakan pada...",
+      "qrCodeBottom": "Edge untuk Android",
       "language": "bahasa",
       "darkTheme": "tema gelap",
       "showBadge": "tampilkan badge",
@@ -170,6 +175,7 @@
       "customContextTooltip": "Simpan snapshot dari konteks tab saat ini. Tab yang baru dibuat akan menggunakan snapshot ini sebagai status awal.",
       "jsShortcutWarning": "Pintasan JavaScript saat ini dinonaktifkan karena penghentian API lama. Fungsi akan dilanjutkan ketika Chromium mengimplementasikan metode userScripts.execute().",
       "jsRuleWarning": "Harap perbarui Chrome untuk mendukung aturan URL Javascript.",
+      "jsRuleWarningAlt": "Harap aktifkan mode pengembang untuk menggunakan fitur JavaScript.",
       "keyboardInput": "input keyboard",
       "keyboardInputTooltip": "Pertimbangkan beralih ke mode input Virtual jika menggunakan keyboard virtual atau tata letak keyboard non-QWERTY. Ini hanya berlaku untuk perubahan pintasan di masa depan dan pintasan yang ada tidak akan terpengaruh.",
       "qwerty": "Tata letak QWERTY",
@@ -187,7 +193,11 @@
         "headerTooltip": "Widget lingkaran diaktifkan.",
         "showIcon": "tampilkan ikon",
         "showIconTooltip": "Tampilkan ikon di menu utama untuk dengan mudah mengaktifkan widget lingkaran.",
-        "autoHide": "sembunyikan otomatis"
+        "autoHide": "sembunyikan otomatis",
+        "fullscreenOnly": "hanya layar penuh",
+        "fullscreenOnlyTooltip": "Hanya tampilkan widget saat video dalam layar penuh.",
+        "pressAction": "tindakan tekan",
+        "togglePause": "alih jeda"
       }
     },
     "editor": {

@@ -92,7 +92,7 @@ export function SectionFlags(props: {}) {
         </div>     
 
         {/* Permission */}
-        {(isFirefox() || !has) && (
+        {!has && (
           <div className="field">
             <div className="labelWithTooltip">
               <span>{gvar.gsm.options.flags.grantPermission}</span>
@@ -152,9 +152,10 @@ export function SectionFlags(props: {}) {
             setView({hideMediaView: !view.hideMediaView})
           }}/>
         </div>
-
+        
         {/* Circle widget */}
         <CircleWidget setView={setView} active={view.circleWidget} setShowWidgetModal={setShowWidgetModal} showOption={view.circleWidget || view.circleWidgetIcon}/>
+
 
         {/* Pin by default */}
         <div className="field marginTop">

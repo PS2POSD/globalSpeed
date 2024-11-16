@@ -11,6 +11,12 @@
     "sliderTooltip": "シフトキーを押し続けて精密な調整を行ってください。",
     "captureRequired": "$1 ショートカットを使用してアクティブにしてください。"
   },
+  "menuLabels": {
+    "invertPage": "ページを反転",
+    "grayscalePage": "グレースケールページ",
+    "videoBrightness": "ビデオの明るさ",
+    "videoContrast": "ビデオのコントラスト"
+  },
   "token": {
     "create": "作成",
     "reset": "リセット",
@@ -142,8 +148,6 @@
     
     "skip": "ABスキップ",
     "skipTooltip": "マークされた位置と現在の位置の間のビデオセグメントをスキップする。",
-    "detectiveMode": "探偵モード",
-    "detectiveModeTooltip": "円を通して見えるもの以外全てを隠す。",
     "cinema": "背景を暗くする",
     "cinemaTooltip": "ビデオの背景を暗くする。出るには、背景を押すか、再度ショートカットを使用します。",
     "presets": "プリセット...",
@@ -157,7 +161,8 @@
   "options": {
     "flags": {
       "header": "オプション",
-      "gptPromo": "ChatGPTの会話を$1で検索します。",
+      "qrCodeTop": "スキャンして開始...",
+      "qrCodeBottom": "Android 用 Edge",
       "language": "言語",
       "darkTheme": "暗いテーマ",
       "showBadge": "バッジを表示",
@@ -178,6 +183,7 @@
       "customContextTooltip": "このタブの現在のコンテキストのスナップショットを保存します。新しく作成されたタブはこのスナップショットを初期状態として使用します。",
       "jsShortcutWarning": "古いAPIの廃止により、JavaScriptのショートカットは現在無効になっています。ChromiumがuserScripts.execute()メソッドを実装すると機能が再開されます。",
       "jsRuleWarning": "Javascript URLルールをサポートするためにChromeを更新してください。",
+      "jsRuleWarningAlt": "JavaScript機能を使用するには、開発者モードを有効にしてください。",
       "keyboardInput": "キーボード入力",
       "keyboardInputTooltip": "仮想キーボードまたは非QWERTYレイアウトのキーボードを使用する場合は、仮想入力モードに切り替えることを検討してください。これは将来のショートカット変更にのみ適用され、既存のショートカットは影響を受けません。",
       "qwerty": "QWERTY配列",
@@ -195,7 +201,12 @@
         "headerTooltip": "円形ウィジェットを有効にしました。",
         "showIcon": "アイコンを表示",
         "showIconTooltip": "メインメニューにアイコンを表示して、円形ウィジェットを簡単に切り替えられるようにします。",
-        "autoHide": "自動非表示"
+        "autoHide": "自動非表示",
+        "fullscreenOnly": "フルスクリーンのみ",
+        "fullscreenOnlyTooltip": "ビデオがフルスクリーンの場合にのみウィジェットを表示します。",
+        "pressAction": "押下アクション",
+        "togglePause": "一時停止を切り替える"
+        
       }
     },
     "editor": {

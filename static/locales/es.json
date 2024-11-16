@@ -11,6 +11,12 @@
     "sliderTooltip": "Mantén presionada la tecla Shift para un control preciso.",
     "captureRequired": "Usa el atajo $1 para activar."
   },
+  "menuLabels": {
+    "invertPage": "invertir página",
+    "grayscalePage": "página en escala de grises",
+    "videoBrightness": "brillo del video",
+    "videoContrast": "contraste del video"
+  },
   "token": {
     "create": "crear",
     "reset": "restablecer",
@@ -142,8 +148,6 @@
     
     "skip": "salto AB",
     "skipTooltip": "Saltar un segmento del video entre la posición marcada y la posición actual.",
-    "detectiveMode": "modo detective",
-    "detectiveModeTooltip": "Ocultar todo excepto lo que es visible a través de un círculo.",
     "cinema": "oscurecer fondo",
     "cinemaTooltip": "Oscurece el fondo del video. Para salir, presiona sobre el fondo o usa el atajo nuevamente.",
     "presets": "preajustes...",
@@ -157,7 +161,8 @@
   "options": {
     "flags": {
       "header": "Opciones",
-      "gptPromo": "Busca en tus conversaciones de ChatGPT con $1.",
+      "qrCodeTop": "Escanea para usar en...",
+      "qrCodeBottom": "Edge para Android",
       "language": "idioma",
       "darkTheme": "tema oscuro",
       "showBadge": "mostra distintivo",
@@ -178,6 +183,7 @@
       "customContextTooltip": "Guarda una instantánea del contexto actual de esta pestaña. Las pestañas creadas recientemente usarán esta instantánea como estado inicial.",
       "jsShortcutWarning": "Los atajos de JavaScript están actualmente desactivados debido a la depreciación de APIs antiguas. La funcionalidad se reanudará cuando Chromium implemente el método userScripts.execute().",
       "jsRuleWarning": "Por favor, actualiza Chrome para admitir las reglas de URL de Javascript.",
+      "jsRuleWarningAlt": "Por favor, habilita el modo desarrollador para usar las funciones de JavaScript.",
       "keyboardInput": "entrada de teclado",
       "keyboardInputTooltip": "Considere cambiar al modo de entrada virtual si usa un teclado virtual o un teclado con disposición no QWERTY. Esto solo aplica a los cambios futuros de atajos y los atajos existentes no se verán afectados.",
       "qwerty": "diseño QWERTY",
@@ -195,7 +201,11 @@
         "headerTooltip": "Widget circular habilitado.",
         "showIcon": "mostrar ícono",
         "showIconTooltip": "Muestra un ícono en el menú principal para alternar cómodamente el widget circular.",
-        "autoHide": "ocultamiento automático"
+        "autoHide": "ocultamiento automático",
+        "fullscreenOnly": "solo pantalla completa",
+        "fullscreenOnlyTooltip": "Mostrar widget solo cuando el video está en pantalla completa.",
+        "pressAction": "acción de pulsación",
+        "togglePause": "alternar pausa"
       }
     },
     "editor": {

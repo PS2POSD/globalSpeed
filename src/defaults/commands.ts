@@ -1,7 +1,7 @@
 
 import { MAX_SPEED_CHROMIUM, MIN_SPEED_CHROMIUM } from "./constants"
 import { Command, Keybind, AdjustMode, CommandGroup, Duration, Trigger } from "../types"
-import { randomId, groupByKey, flatJoin, isFirefox, getPopupSize } from "../utils/helper"
+import { randomId, groupByKey, flatJoin, isFirefox, getPopupSize, isMobile } from "../utils/helper"
 import { filterInfos } from "./filters"
 
 export type CommandName = "nothing" | "runCode" | "openUrl" | "intoPopup" |
@@ -161,8 +161,7 @@ export let commandInfos: {[key in CommandName]: Command} = {
       command: "seek",
       enabled: true,
       greedy: true,
-      valueNumber: 10,
-      wraparound: true 
+      valueNumber: 10
     })
   },
   pause: {
@@ -403,8 +402,8 @@ export let commandInfos: {[key in CommandName]: Command} = {
     valueType: "adjustMode",
     requiresTabCapture: true,
     ref: {
-      min: -36,
-      max: 36,
+      min: -100,
+      max: 100,
       step: 1,
       default: 0,
       sliderMin: -6,
@@ -506,6 +505,8 @@ export let commandInfos: {[key in CommandName]: Command} = {
 
 
 export function getDefaultKeybinds(): Keybind[] {
+  if (isMobile()) return []
+  
   let kbs: Keybind[] = [
     {
       ...commandInfos.speed.generate(),
@@ -571,11 +572,7 @@ export function getDefaultKeybinds(): Keybind[] {
       key: {code: "Backquote"},
       adjustMode: AdjustMode.ITC,
       duration: Duration.PERCENT,
-    },
-    {
-      ...commandInfos.cinema.generate(),
-      key: {code: "Backquote", shiftKey: true},
-      spacing: 2
+      spacing: 1
     },
     {
       ...commandInfos.setMark.generate(),
@@ -594,55 +591,63 @@ export function getDefaultKeybinds(): Keybind[] {
       spacing: 2
     },
     {
-      ...commandInfos.fxFilter.generate(),
-      key: {code: "KeyE"},
-      filterOption: "invert",
-      filterTarget: "both",
-      adjustMode: AdjustMode.CYCLE,
-      valueCycle: [0, 1],
-      enabled: false
-    },
-    {
-      ...commandInfos.fxFilter.generate(),
-      key: {code: "KeyE", shiftKey: true},
-      filterOption: "grayscale",
-      filterTarget: "both",
-      adjustMode: AdjustMode.CYCLE,
-      valueCycle: [0, 1],
-      spacing: 1,
-      enabled: false
-    },
-
-    {
-      ...commandInfos.fxFilter.generate(),
-      filterOption: "brightness",
-      adjustMode: AdjustMode.ITC,
-      valueItcMin: 0.5,
-      valueItcMax: 3,
-      key: {code: "KeyT"},
-      enabled: false
-    },
-    {
-      ...commandInfos.fxFilter.generate(),
-      filterOption: "contrast",
-      adjustMode: AdjustMode.ITC,
-      valueItcMin: 0.75,
-      valueItcMax: 1.25,
-      key: {code: "KeyT", shiftKey: true},
-      enabled: false,
-      spacing: 1
-    },
-    {
       ...commandInfos.drawPage.generate(),
       trigger: Trigger.CONTEXT,
       contextLabel: "- draw on page",
       replaceWithGsm: 4
     },
     {
+      ...commandInfos.cinema.generate(),
+      trigger: Trigger.CONTEXT,
+      contextLabel: "- darken background",
+      replaceWithGsm: 10
+    },
+    {
+      ...commandInfos.fxFilter.generate(),
+      trigger: Trigger.CONTEXT,
+      replaceWithGsm: 6,
+      contextLabel: "- fx :: invert page",
+      filterOption: "invert",
+      filterTarget: "both",
+      adjustMode: AdjustMode.CYCLE,
+      valueCycle: [0, 1]
+    },
+    {
+      ...commandInfos.fxFilter.generate(),
+      trigger: Trigger.CONTEXT,
+      replaceWithGsm: 7,
+      contextLabel: "- fx :: grayscale page",
+      filterOption: "grayscale",
+      filterTarget: "backdrop",
+      adjustMode: AdjustMode.ITC,
+      valueItcMin: 0,
+      valueItcMax: 1,
+    },
+    {
+      ...commandInfos.fxFilter.generate(),
+      trigger: Trigger.CONTEXT,
+      replaceWithGsm: 8,
+      contextLabel: "- fx :: video brightness",
+      filterOption: "brightness",
+      adjustMode: AdjustMode.ITC,
+      valueItcMin: 0.5,
+      valueItcMax: 2,
+    },
+    {
+      ...commandInfos.fxFilter.generate(),
+      trigger: Trigger.CONTEXT,
+      replaceWithGsm: 9,
+      contextLabel: "- fx :: video contrast",
+      filterOption: "contrast",
+      adjustMode: AdjustMode.ITC,
+      valueItcMin: 0.75,
+      valueItcMax: 1.25
+    },
+    {
       ...commandInfos.fxReset.generate(),
       trigger: Trigger.CONTEXT,
       filterTarget: "both",
-      contextLabel: "- FX reset",
+      contextLabel: "- fx :: reset",
       replaceWithGsm: 5
     }
   ]

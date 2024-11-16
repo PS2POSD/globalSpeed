@@ -53,7 +53,9 @@ export type AnyDict = {[key: string]: any}
 
 export type State = {
   version: number,
-  gptWebsiteCounter?: number,
+  qrCodeHide?: boolean,
+  qrCodeSeenCounter?: number, 
+  speedChangeCounter?: number,
   language?: string,
   fontSize?: number,
   pinByDefault?: boolean,
@@ -81,6 +83,7 @@ export type State = {
   speedSlider?: {min: number, max: number},
   ignorePiP?: boolean, // PiP videos are deprioritized for hotkeys.
   minimizeOrlBanner?: boolean,
+  hideOrlBanner?: boolean,
   virtualInput?: boolean,
   hideGrant?: boolean,
   circleWidget?: boolean,
@@ -108,14 +111,19 @@ export type IndicatorInit = {
   static?: boolean,
   position?: "TL" | "TR" | "BL" | "BR" | "C",
   animation?: 1 | 2 | 3 | 4 | 5,
-  showShadow?: boolean
+  showShadow?: boolean,
+  key?: string 
 }
 
 export type CircleInit = {
   circleSize?: number,
   circleInitial?: Point,
   autoHideDisabled?: boolean,
-  opacity?: number 
+  opacity?: number,
+  fullscreenOnly?: boolean,
+  mainAction?: "PAUSE" | "SPEED",
+  mainActionSpeed?: number,
+  key?: string
 }
 
 export enum InitialContext {

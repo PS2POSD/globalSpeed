@@ -4,12 +4,12 @@ import "./badge"
 import "./rules"
 import "./capture"
 
-import { AnyDict, CONTEXT_KEYS, Context, InitialContext, Keybind, KeybindMatch, KeybindMatchId, State, Trigger, URLRule} from "src/types"
+import { AnyDict, CONTEXT_KEYS, Context, InitialContext, Keybind, KeybindMatch, KeybindMatchId, State, StateView, Trigger, URLRule} from "src/types"
 import { PREFIX_SETS, dumpConfig, fetchView, getKeysByPrefix, pushView, restoreConfig } from "src/utils/state"
 import { migrateSchema } from "src/background/utils/migrateSchema"
 import { getDefaultContext, getDefaultState } from "src/defaults"
-import { isFirefox } from "src/utils/helper"
-import { getCorrectPane, getLatestActiveTabInfo, tabToTabInfo } from "src/utils/browserUtils"
+import { isFirefox, isMobile } from "src/utils/helper"
+import { getLatestActiveTabInfo, tabToTabInfo } from "src/utils/browserUtils"
 import { ProcessKeybinds, setValue, type SetValueInit } from "./utils/processKeybinds"
 import { findMatchingKeybindsContext, findMatchingKeybindsGlobal, testURL } from "src/utils/configUtils"
 import { loadGsm } from "src/utils/gsm"
@@ -46,19 +46,26 @@ async function onInstallAsync() {
 }
 
 gvar.sess.installCbs.add(() => {
-    chrome.storage.session.setAccessLevel?.({accessLevel: chrome.storage.AccessLevel.TRUSTED_AND_UNTRUSTED_CONTEXTS})
     gvar.installPromise = onInstallAsync()
-    isFirefox() || ensureContentScripts()
 })
 
-gvar.sess.cbs.add(async () => {
-    if (gvar.installPromise) await gvar.installPromise
-
+gvar.sess.safeCbs.add(async () => {
     const items = await chrome.storage.local.get()
     let keys = Object.keys(items).filter(k => items[k] == null)
-
+    
     keys = [...keys, ...(await getKeysByPrefix(PREFIX_SETS.SESSION, items))]
     if (keys.length) await chrome.storage.local.remove(keys)
+
+    isFirefox() || ensureContentScripts()
+    chrome.storage.session?.setAccessLevel?.({accessLevel: chrome.storage.AccessLevel.TRUSTED_AND_UNTRUSTED_CONTEXTS})
+})
+
+
+gvar.sess.safeStartupCbs.add(async () => {
+    let tabs = await chrome.tabs.query({})
+    const view = await fetchView({pinByDefault: true, initialContext: true, customContext: true})
+    if (!view.pinByDefault) return 
+    tabs.forEach(tab => processNewTab(tab, view, true))
 })
 
 async function ensureContentScripts() {
@@ -73,25 +80,25 @@ async function ensureContentScripts() {
 }
 
 
-chrome.tabs.onRemoved.addListener(async tab => {
+chrome.tabs.onRemoved.addListener(async tabId => {
     const rules = ((await fetchView(["rules"])).rules || []) as URLRule[]
 
     chrome.storage.local.remove([
-        ...[...CONTEXT_KEYS, "isPinned"].map(k => `t:${tab}:${k}`),
-        ...CONTEXT_KEYS.map(k => `r:${tab}:${k}`),
-        `s:ranJs:${tab}`,
-        ...rules.map(r => `s:ro:${tab}:${r.id}`),
-        `s:pf:${tab}`,
-        `s:pp:${tab}`
+        ...[...CONTEXT_KEYS, "isPinned"].map(k => `t:${tabId}:${k}`),
+        ...CONTEXT_KEYS.map(k => `r:${tabId}:${k}`),
+        ...rules.map(r => `s:ro:${tabId}:${r.id}`)
     ])
 
+    chrome.storage.session.remove(`m:scope:${tabId}:0`)
     if (Math.random() > 0.95) clearClosed()
 })
 
-chrome.tabs.onCreated.addListener(async tab => {
-    const view = await fetchView({pinByDefault: true, initialContext: true, customContext: true}) 
+chrome.tabs.onCreated.addListener(processNewTab)
+
+async function processNewTab(tab: chrome.tabs.Tab, view?: StateView, ignorePreviousTab?: boolean) {
+    view = view || (await fetchView({pinByDefault: true, initialContext: true, customContext: true}) )
     if (!view.pinByDefault) return 
-    let openerId = tab.openerTabId
+    let openerId = ignorePreviousTab ? null : tab.openerTabId
     let mode = view.initialContext ?? InitialContext.PREVIOUS
     
     let newContext = getDefaultContext(true)
@@ -104,9 +111,9 @@ chrome.tabs.onCreated.addListener(async tab => {
     }
 
     pushView({override: {...newContext, isPinned: true}, tabId: tab.id})
-})
+};
 
-isFirefox() || chrome.commands.onCommand.addListener(
+!isFirefox() && !isMobile() && chrome.commands?.onCommand.addListener(
     async (command: string, tab: chrome.tabs.Tab) => {
       const isGlobal = !tab
       const view = await fetchView({enabled: true, superDisable: true, keybinds: true, keybindsUrlCondition: true, latestViaShortcut: true})
@@ -121,9 +128,8 @@ isFirefox() || chrome.commands.onCommand.addListener(
       let matches = findMatchingKeybindsGlobal(keybinds, command)
     
       if (!matches.length) return 
-      // Latest is fine? Play around later.
+
       let tabInfo = tab ? tabToTabInfo(tab) : (await getLatestActiveTabInfo())
-      tabInfo = await getCorrectPane(tabInfo)
     
     
       const url = tabInfo?.url || ""
@@ -144,7 +150,7 @@ isFirefox() || chrome.commands.onCommand.addListener(
     }
 )
 
-chrome.contextMenus.onClicked.addListener(async (item, tab) => {
+chrome.contextMenus?.onClicked.addListener(async (item, tab) => {
     const keybinds = (await fetchView({keybinds: true})).keybinds
     const matches = findMatchingKeybindsContext(keybinds, item.menuItemId as string)
     if (matches.length !== 1) return 
@@ -157,7 +163,6 @@ declare global {
         requestGsm: { type: "REQUEST_GSM" }
         requestCreateTab: { type: "REQUEST_CREATE_TAB", url: string}
         triggerKeybinds: { type: "TRIGGER_KEYBINDS", ids: KeybindMatchId[]}
-        edgePing: { type: "EDGE_PING" }
         requestPane: { type: "REQUEST_PANE"}
         setSession: { type: "SET_SESSION", override: AnyDict}
         getSession: { type: "GET_SESSION", keys: any}
@@ -201,22 +206,6 @@ chrome.runtime.onMessage.addListener((msg: Messages, sender, reply) => {
             new ProcessKeybinds(matches, {tabId: sender.tab.id, frameId: sender.frameId, windowId: sender.tab.windowId})
         })
         reply(true)
-    } else if (msg.type === "EDGE_PING") {
-        if (sender.tab?.index !== -1) return 
-        chrome.tabs.get(sender.tab.id, info => {
-        if (!info || !(info.index > 0)) return 
-        chrome.tabs.query({windowId: sender.tab.windowId, index: info.index}, tabs => {
-            if (tabs.length !== 1 && tabs[0].id !== info.id) return 
-            // this tab is left pane. 
-            const leftTabId = tabs[0].id
-            chrome.storage.local.set({
-            [`s:pp:${leftTabId}`]: info.id
-            })
-            chrome.tabs.sendMessage(leftTabId, {type: "TRACK_FOCUS", tabKey: `s:pf:${leftTabId}`, otherTabKey: `s:pf:${info.id}`})
-            chrome.tabs.sendMessage(info.id, {type: "TRACK_FOCUS", tabKey: `s:pf:${info.id}`, otherTabKey: `s:pf:${leftTabId}`})
-        })
-        })
-        reply(true)
     } else if (msg.type === "SET_SESSION") {
         chrome.storage.session.set(msg.override)
     } else if (msg.type === "GET_SESSION") {
@@ -257,7 +246,7 @@ gvar.es.addWatcher([], async changes => {
     let tabs = await chrome.tabs.query({audible: true, active: false})
 
     tabs.forEach(tab => {
-        if (raw[`t:${tab.id}:isPinned`] || raw[`r:${tab.id}:speed`]) return 
+        if (raw[`t:${tab.id}:isPinned`] || raw[`r:${tab.id}:speed`] || raw[`r:${tab.id}:enabled`] === false) return 
         chrome.tabs.sendMessage(tab.id, {type: "BG_SPEED_OVERRIDE", value} as Messages)
     })
 })

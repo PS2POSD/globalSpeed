@@ -11,9 +11,15 @@ import { useThemeSync } from "src/hooks/useThemeSync"
 import { createRoot } from "react-dom/client"
 import { OrlHeader } from "./OrlHeader"
 import { loadGsm } from "src/utils/gsm"
-import { isFirefox } from "src/utils/helper"
+import { isFirefox, isMobile } from "src/utils/helper"
 import "./popup.css"
 
+declare global {
+  
+  interface GlobalVar {
+    speedCounterAtLaunch: number   
+  }
+}
 
 export function App(props: {}) {
   const [panel, setPanel] = useState(0)
@@ -50,6 +56,7 @@ export function App(props: {}) {
   )
 }
 
+if (isMobile())  document.documentElement.classList.add("mobile") 
 Promise.all([
   loadGsm().then(gsm => {
     gvar.gsm = gsm 
@@ -62,5 +69,6 @@ Promise.all([
 ]).then(() => {
   const root = createRoot(document.querySelector("#root"))
   root.render(<ErrorFallback><App/></ErrorFallback>)
+  chrome.storage.session?.setAccessLevel?.({accessLevel: chrome.storage.AccessLevel.TRUSTED_AND_UNTRUSTED_CONTEXTS})
 })
 

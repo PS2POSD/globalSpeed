@@ -11,6 +11,12 @@
     "sliderTooltip": "Maintenez la touche Shift pour un contrôle précis.",
     "captureRequired": "Utilisez le raccourci $1 pour activer."
   },
+  "menuLabels": {
+    "invertPage": "inverser la page",
+    "grayscalePage": "page en niveaux de gris",
+    "videoBrightness": "luminosité de la vidéo",
+    "videoContrast": "contraste de la vidéo"
+  },
   "token": {
     "create": "créer",
     "reset": "réinitialiser",
@@ -141,8 +147,6 @@
 
     "skip": "saut AB",
     "skipTooltip": "Sauter un segment de la vidéo entre la position marquée et la position actuelle.",
-    "detectiveMode": "mode détective",
-    "detectiveModeTooltip": "Masquer tout sauf ce qui est visible à travers un cercle.",
     "cinema": "obscurcir l'arrière-plan",
     "cinemaTooltip": "Obscurcit l'arrière-plan de la vidéo. Pour quitter, appuyez sur l'arrière-plan ou utilisez à nouveau le raccourci.",
     "presets": "préréglages...",
@@ -156,7 +160,8 @@
   "options": {
     "flags": {
       "header": "Options",
-      "gptPromo": "Recherchez dans vos conversations ChatGPT avec $1.",
+      "qrCodeTop": "Scannez pour utiliser sur...",
+      "qrCodeBottom": "Edge pour Android",
       "language": "langue",
       "_languageTooltip": "Utilisateurs ayant contribué aux traductions françaises : @bounis67",
       "darkTheme": "thème sombre",
@@ -178,6 +183,7 @@
       "customContextTooltip": "Enregistre un instantané du contexte actuel de cet onglet. Les onglets récemment créés utiliseront cet instantané comme état initial.",
       "jsShortcutWarning": "Les raccourcis JavaScript sont actuellement désactivés en raison de la dépréciation des anciennes API. La fonctionnalité reprendra lorsque Chromium mettra en œuvre la méthode userScripts.execute().",
       "jsRuleWarning": "Veuillez mettre à jour Chrome pour prendre en charge les règles d'URL JavaScript.",
+      "jsRuleWarningAlt": "Veuillez activer le mode développeur pour utiliser les fonctionnalités JavaScript.",
       "keyboardInput": "entrée clavier",
       "keyboardInputTooltip": "Envisagez de passer au mode d'entrée virtuelle si vous utilisez un clavier virtuel ou un clavier avec une disposition non QWERTY. Cela s'applique uniquement aux futurs changements de raccourcis et les raccourcis existants ne seront pas affectés.",
       "qwerty": "disposition QWERTY",
@@ -189,13 +195,17 @@
       "speedPresets": "préréglages de vitesse",
       "widget": {
         "option": "widget circulaire",
-        "optionTooltip": "(Expérimental) Un widget circulaire s'affichera tant que les vidéos seront visibles :\n - Un widget circulaire s'affichera tant que les vidéos seront visibles.\n - Faites glisser à gauche/droite pour avancer/reculer dans la vidéo.\n - Faites glisser vers le haut/bas pour ajuster la vitesse de lecture.",
+        "optionTooltip": "(Expérimental) Un widget circulaire s'affichera tant que les vidéos seront visibles :\n - Faites glisser à gauche/droite pour avancer/reculer dans la vidéo.\n - Faites glisser vers le haut/bas pour ajuster la vitesse de lecture.",
         "movementMobile": "\n - Appuyez sur le cercle pendant quelques secondes pour le déplacer ou le supprimer.",
         "movementDesktop": "\n - Faites glisser le cercle avec le bouton droit de la souris pour le déplacer ou le supprimer.",
         "headerTooltip": "Widget circulaire activé.",
         "showIcon": "afficher l'icône",
         "showIconTooltip": "Affiche une icône dans le menu principal pour basculer facilement le widget circulaire.",
-        "autoHide": "masquage automatique"
+        "autoHide": "masquage automatique",
+        "fullscreenOnly": "plein écran uniquement",
+        "fullscreenOnlyTooltip": "Afficher le widget uniquement lorsque la vidéo est en plein écran.",
+        "pressAction": "action de pression",
+        "togglePause": "basculer la pause"
       }
     },
     "editor": {

@@ -17,26 +17,18 @@
   select {
     text-align-last: center;
   }
-  
-  & > .urlRules {
+
+  & > .urlBubble {
     position: absolute;
     top: -5px;
-    right: -10px;
-    background-color: #0031ff;
+    right: -5px;
+    background-color: #ff0000;
     color: white;
     padding: 0 5px;
     border-radius: 10px;
-    display: none; 
-
-    &.active {
-      display: block; 
-    }
-
-    &:hover {
-      cursor: pointer;
-    }
+    display: block;
   }
-
+ 
   & > .command {
 
     display: flex;
@@ -115,6 +107,7 @@
   & > .talues {
     display: grid;
     row-gap: 10px;
+    width: 175px;
 
     & > .globalPicker {
       display: grid;

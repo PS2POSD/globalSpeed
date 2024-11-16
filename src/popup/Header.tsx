@@ -1,7 +1,7 @@
 import { useMemo } from "react"
 import { checkFilterDeviation, requestSyncContextMenu } from "../utils/configUtils"
 import { GoArrowLeft} from "react-icons/go"
-import { FaGithub, FaRegCircle } from "react-icons/fa";
+import { FaGithub } from "react-icons/fa";
 import { FaPowerOff, FaVolumeUp } from "react-icons/fa"
 import { useStateView } from "../hooks/useStateView"
 import { getDefaultAudioFx, getDefaultFx } from "../defaults"
@@ -10,9 +10,9 @@ import { AnyDict, ORL_CONTEXT_KEYS } from "src/types"
 import { releaseTabCapture } from "src/background/utils/tabCapture"
 import { Gear, Pin, Zap } from "src/comps/svgs";
 import { pushView } from "src/utils/state";
-import "./Header.css"
 import { FaCircleDot } from "react-icons/fa6";
-import { feedbackText } from "src/utils/helper";
+import { feedbackText, isFirefox } from "src/utils/helper";
+import "./Header.css"
 
 
 const SUPPORTS_TAB_CAPTURE = !!(chrome.tabCapture?.capture && chrome.offscreen?.createDocument)
@@ -70,7 +70,7 @@ export function Header(props: HeaderProps) {
       >
         <Pin size="1.42rem"/>
       </div>
-
+      
       {/* Circle gesture */}
       {(props.panel === 0 && view.circleWidgetIcon) ? (
         <CircleIcon active={view.circleWidget} onClick={() => {}}/>
@@ -96,8 +96,9 @@ export function Header(props: HeaderProps) {
       ) : <div className="noPadding"/>}
 
       {/* Options page */}
-      <div title="open options page." onClick={e => {
-        chrome.runtime.openOptionsPage()
+      <div title="open options page." onClick={async e => {
+        await chrome.runtime.openOptionsPage()
+        if (isFirefox()) window.close()
       }}>
         <Gear size="1.42rem"/>
       </div>
@@ -190,11 +191,11 @@ export function CircleIcon(props: CircleIconProps) {
           circleWidget: false
         }, tabId: gvar.tabInfo.tabId})
       }}
-      onClick={() => {
+      onClick={e => {
         pushView({override: {
           circleWidget: !props.active
         }, tabId: gvar.tabInfo.tabId})
-        if (!props.active) feedbackText(gvar.gsm.options.flags.widget.headerTooltip, null, 2400)
+        if (!props.active) feedbackText(gvar.gsm.options.flags.widget.headerTooltip, {x: e.clientX - 100, y: e.clientY + 40}, 2400)
       }}
     >
       <FaCircleDot size="1.02rem"/>

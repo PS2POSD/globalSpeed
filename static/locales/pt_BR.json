@@ -11,6 +11,12 @@
     "sliderTooltip": "Segure a tecla Shift para um controle preciso.",
     "captureRequired": "Use o atalho $1 para ativar."
   },
+  "menuLabels": {
+    "invertPage": "inverter página",
+    "grayscalePage": "página em escala de cinza",
+    "videoBrightness": "brilho do vídeo",
+    "videoContrast": "contraste do vídeo"
+  },
   "token": {
     "create": "crio",
     "reset": "redefinir",
@@ -142,8 +148,6 @@
     
     "skip": "Pular AB", 
     "skipTooltip": "Pular um segmento do vídeo entre a posição marcada e a posição atual.",
-    "detectiveMode": "modo detetive",
-    "detectiveModeTooltip": "Esconder tudo exceto o que está visível através de um círculo.",
     "cinema": "escurecer fundo",
     "cinemaTooltip": "Escurece o fundo do vídeo. Para sair, pressione no fundo ou use o atalho novamente.",
     "presets": "predefinições...",
@@ -158,7 +162,8 @@
     "flags": {
       "header": "Opções",
       "language": "língua",
-      "gptPromo": "Pesquise suas conversas do ChatGPT com $1.",
+      "qrCodeTop": "Escaneie para usar no...",
+      "qrCodeBottom": "Edge para Android",
       "darkTheme": "tema escuro",
       "showBadge": "mostrar distintivo",
       "showBadgeTooltip": "O distintivo é o texto no ícone da extensão.",
@@ -178,6 +183,7 @@
       "customContextTooltip": "Salva uma captura do contexto atual desta aba. Abas criadas recentemente usarão esta captura como estado inicial.",
       "jsShortcutWarning": "Atalhos de JavaScript estão atualmente desativados devido à depreciação de APIs antigas. A funcionalidade será retomada quando o Chromium implementar o método userScripts.execute().",
       "jsRuleWarning": "Por favor, atualize o Chrome para suportar as regras de URL de Javascript.",
+      "jsRuleWarningAlt": "Por favor, ative o modo de desenvolvedor para usar os recursos do JavaScript.",
       "keyboardInput": "entrada de teclado",
       "keyboardInputTooltip": "Considere mudar para o modo de entrada virtual se estiver usando um teclado virtual ou um teclado de layout não-QWERTY. Isso só se aplica a mudanças futuras de atalhos e atalhos existentes não serão afetados.",
       "qwerty": "layout QWERTY",
@@ -195,7 +201,11 @@
         "headerTooltip": "Widget circular ativado.",
         "showIcon": "mostrar ícone",
         "showIconTooltip": "Mostra um ícone no menu principal para alternar convenientemente o widget circular.",
-        "autoHide": "ocultar automaticamente"
+        "autoHide": "ocultar automaticamente",
+        "fullscreenOnly": "somente tela cheia",
+        "fullscreenOnlyTooltip": "Mostrar widget apenas quando o vídeo estiver em tela cheia.",
+        "pressAction": "ação de pressão",
+        "togglePause": "alternar pausa"
       }  
     },
     "editor": {

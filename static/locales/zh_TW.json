@@ -12,6 +12,12 @@
     "sliderTooltip": "按住 Shift 鍵以精確控制。",
     "captureRequired": "使用 $1 快捷鍵來啟動。"
   },
+  "menuLabels": {
+    "invertPage": "反轉頁面",
+    "grayscalePage": "灰階頁面",
+    "videoBrightness": "影片亮度",
+    "videoContrast": "影片對比度"
+  },
   "token": {
     "create": "建立",
     "reset": "重設",
@@ -143,8 +149,6 @@
     
     "skip": "AB跳過", 
     "skipTooltip": "跳過標記位置和當前位置之間的視頻段。",
-    "detectiveMode": "偵探模式",
-    "detectiveModeTooltip": "隱藏除通過一個圓形可見的一切外的所有內容。",
     "cinema": "加深背景",
     "cinemaTooltip": "加深視頻的背景。要退出，按背景或再次使用快捷鍵。",
     "presets": "預設...",
@@ -158,7 +162,8 @@
   "options": {
     "flags": {
       "header": "選項",
-      "gptPromo": "使用 $1 搜尋您的 ChatGPT 對話。",
+      "qrCodeTop": "掃描二維碼",
+      "qrCodeBottom": "在安卓版Edge上使用",
       "language": "語言",
       "_languageTooltip": "對中文翻譯做出貢獻的用戶：@nathan60107",
       "darkTheme": "深色佈景主題",
@@ -180,6 +185,7 @@
       "customContextTooltip": "儲存此標籤目前上下文的快照。新創建的標籤將使用這個快照作為初始狀態。",
       "jsShortcutWarning": "由於舊API的廢棄，JavaScript快捷方式目前已被禁用。功能將在Chromium實施userScripts.execute()方法時恢復。",
       "jsRuleWarning": "請更新 Chrome 以支持 Javascript URL 規則。",
+      "jsRuleWarningAlt": "請啟用開發者模式以使用 JavaScript 功能。",
       "keyboardInput": "鍵盤輸入",
       "keyboardInputTooltip": "如果使用虛擬鍵盤或非QWERTY佈局鍵盤，考慮切換到虛擬輸入模式。這只適用於未來的快捷鍵變更，現有的快捷鍵不會受影響。",
       "qwerty": "QWERTY佈局",
@@ -197,7 +203,11 @@
         "headerTooltip": "啟用圓形小工具。",
         "showIcon": "顯示圖示",
         "showIconTooltip": "在主選單上顯示圖示以方便切換圓形小工具。",
-        "autoHide": "自動隱藏"
+        "autoHide": "自動隱藏",
+        "fullscreenOnly": "僅全螢幕",
+        "fullscreenOnlyTooltip": "僅在影片全螢幕時顯示小工具。",
+        "pressAction": "按下動作",
+        "togglePause": "切換暫停"
       }
     },
     "editor": {

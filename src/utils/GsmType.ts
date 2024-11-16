@@ -14,6 +14,12 @@ export type Gsm = {
     sliderTooltip: string,
     captureRequired: string
   },
+  menuLabels: {
+    invertPage: string,
+    grayscalePage: string,
+    videoBrightness: string,
+    videoContrast: string
+  },
   token: {
     create: string,
     reset: string,
@@ -137,8 +143,6 @@ export type Gsm = {
     intoPopupTooltip: string,
     skip: string,
     skipTooltip: string,
-    detectiveMode: string,
-    detectiveModeTooltip: string,
     cinema: string,
     cinemaTooltip: string,
     presets: string,
@@ -152,7 +156,10 @@ export type Gsm = {
   options: {
     flags: {
       header: string,
-      gptPromo: string,
+      _qrCodeCompact?: boolean,
+      _qrCodeBottomSize?: number,
+      qrCodeTop: string,
+      qrCodeBottom: string,
       language: string,
       _languageTooltip?: string,
       darkTheme: string,
@@ -174,6 +181,7 @@ export type Gsm = {
       customContextTooltip: string,
       jsShortcutWarning: string,
       jsRuleWarning: string,
+      jsRuleWarningAlt: string,
       keyboardInput: string,
       keyboardInputTooltip: string,
       qwerty: string,
@@ -191,7 +199,11 @@ export type Gsm = {
         headerTooltip: string,
         showIcon: string,
         showIconTooltip: string,
-        autoHide: string
+        autoHide: string,
+        fullscreenOnly: string,
+        fullscreenOnlyTooltip: string,
+        pressAction: string,
+        togglePause: string
       }
     },
     editor: {

@@ -4,14 +4,14 @@ import { insertStyle } from "src/utils/nativeUtils";
 import { fetchView, pushView } from "src/utils/state";
 import { conformSpeed, formatSpeed } from "src/utils/configUtils";
 import { Indicator } from "./Indicator";
-import { between, clamp, extractClient, formatDuration, inverseLerp, isMobile, lerp, roundTo, timeout } from "src/utils/helper";
+import { between, clamp, extractClient, formatDuration, inverseLerp, isFirefoxMobile, isMobile, lerp, roundTo } from "src/utils/helper";
 import { seekTo, setPause } from "./applyMediaEvent";
 import debounce from "lodash.debounce";
 import styles from "./Circle.css?raw"
 
 const MIN_TO_ACTIVATE = 50
 const MIN_STRONG = 115
-const DELAY = 300
+const DELAY = isMobile() ? 450 : 350
 
 export class Circle extends Popover {
     released = false 
@@ -38,12 +38,18 @@ export class Circle extends Popover {
         initialTime: number 
     }
     strong = true 
-    hidden = true  
-    hiddenTimeout: number 
+    key: string 
+
+    autoHidden = true
+    autoHiddenTimeout: number 
+    hidden = false 
     conflictWithDelete = false 
+    clientWidth = this._div.clientWidth
+    clientHeight = this._div.clientHeight
     constructor(private init: CircleInit) {
         super()
         this.init = init || {}
+        this.key = this.init.key
         this.x = this.init.circleInitial?.x ?? this.x
         this.y = this.init.circleInitial?.y ?? this.y
         this.autoHide = !this.init.autoHideDisabled
@@ -79,7 +85,8 @@ export class Circle extends Popover {
         this.drawPosition()
         this.drawCircleOpacity()
         gvar.os.mediaTower.reobserveAllVideos()
-        this.autoHide ? this.makeHidden() : this.makeVisible()
+        this.autoHidden = this.autoHide
+        this.syncVisibility()
     }
     release = () => {
         this.stop()
@@ -98,6 +105,7 @@ export class Circle extends Popover {
         gvar.os.eListen.pointerMoveCbs.add(this.handlePointerMove)
         gvar.os.eListen.touchMoveCbs.add(this.handlePointerMove)
         gvar.os.eListen.contextMenuCbs.add(this.handleContextMenu)
+        gvar.os.eListen.fsCbs.add(this.syncVisibility)
 
         gvar.os.eListen.touchStartCbs.add(this.handleGuard)
         gvar.os.eListen.touchEndCbs.add(this.handleGuard)
@@ -112,7 +120,7 @@ export class Circle extends Popover {
     stop = () => {
         if (!this.video) return 
         this.clearSession()
-        clearTimeout(this.hiddenTimeout); delete this.hiddenTimeout
+        clearTimeout(this.autoHiddenTimeout); delete this.autoHiddenTimeout
         delete this.video
         this._update(false)
         gvar.os.eListen.pointerDownCbs.delete(this.handlePointerDown)
@@ -121,6 +129,7 @@ export class Circle extends Popover {
         gvar.os.eListen.pointerMoveCbs.delete(this.handlePointerMove)
         gvar.os.eListen.touchMoveCbs.delete(this.handlePointerMove)
         gvar.os.eListen.contextMenuCbs.delete(this.handleContextMenu)
+        gvar.os.eListen.fsCbs.delete(this.syncVisibility)
 
         gvar.os.eListen.touchStartCbs.delete(this.handleGuard)
         gvar.os.eListen.touchEndCbs.delete(this.handleGuard)
@@ -131,19 +140,30 @@ export class Circle extends Popover {
         gvar.os.eListen.clickCbs.delete(this.handleGuard)
         gvar.os.eListen.dblClickCbs.delete(this.handleGuard)
     }
-    startHiddenTimeout = (show?: boolean) => {
-        show === true && this.makeVisible()
-        show === false && this.makeHidden()
-        clearTimeout(this.hiddenTimeout)
-        this.hiddenTimeout = setTimeout(this.makeHidden, 5_000)
+    updateClientDimensions = () => {
+        this.clientWidth = this._div.clientWidth
+        this.clientHeight = this._div.clientHeight
     }
-    makeHidden = () => {
-        this.hidden = true 
-        this._div.style.opacity = "0"
+    startShowTimeout = () => {
+        this.autoHidden = false   
+        clearTimeout(this.autoHiddenTimeout)
+        this.autoHiddenTimeout = setTimeout(this.clearShow, 4_000)
+        this.syncVisibility()
     }
-    makeVisible = () => {
-        this.hidden = false 
-        this._div.style.opacity = "1"
+    clearShow = () => {
+        this.autoHidden = true  
+        this.syncVisibility()
+    }
+    syncVisibility = () => {
+        if (this.autoHidden || (this.init.fullscreenOnly && !document.fullscreenElement)) {
+            this._div.style.opacity = "0"
+            this.hidden = true 
+            this.circle.style.pointerEvents = "none"
+        } else {
+            this._div.style.opacity = "1"
+            this.hidden = false 
+            this.circle.style.pointerEvents = "all"
+        }
     }
     clearPreventSecond = () => {
         delete this.preventSecond
@@ -158,10 +178,10 @@ export class Circle extends Popover {
         if (this.preventSecond || this.downAt) {
             e.cancelable && e.preventDefault()
             e.stopImmediatePropagation()
-        }
+        } 
     }
     handlePointerDown = (e: PointerEvent) => {
-        this.autoHide && this.startHiddenTimeout(true)
+        this.autoHide && this.startShowTimeout()
         if (this.downAt) this.clearSession()
         if (this.isAtCircle(extractClient(e))) {
             this.downAt = Date.now() 
@@ -176,16 +196,14 @@ export class Circle extends Popover {
             this.preventDefault(e)
             return
         }
-        this.autoHide && this.startHiddenTimeout(true)
+        this.autoHide && this.startShowTimeout()
         this.preventDefault(e)
         
-        if (!this.movingMode && !this.leftCircle) {
-            this.togglePause()
-        }
+        if (!this.movingMode && !this.leftCircle) this.doMain()
         this.clearSession()
     }
     handlePointerMove = async (e: PointerEvent | TouchEvent) => {
-        this.autoHide && this.startHiddenTimeout(true)
+        this.autoHide && this.startShowTimeout()
         if (!this.downAt) return 
         if (e instanceof PointerEvent && e.pointerType !== "mouse") {
             this.preventDefault(e)
@@ -196,9 +214,14 @@ export class Circle extends Popover {
         let { clientX, clientY } = extractClient(e)
 
         if (this.movingMode) {
-            this.x = clientX / window.innerWidth * 100
-            this.y = clientY / window.innerHeight * 100
-            if (this.isAtDelete({clientX, clientY})) {
+            this.updateClientDimensions()
+            if (isFirefoxMobile()) clientY -= (window.visualViewport.height - window.innerHeight) / 2
+            this.x = clientX / this.clientWidth * 100
+            this.y = clientY / this.clientHeight * 100
+
+
+
+            if (this.isAtDelete()) {
                 pushView({override: {circleWidget: false}, tabId: gvar.tabInfo.tabId})
                 setNewPosition.cancel()
                 return 
@@ -217,7 +240,7 @@ export class Circle extends Popover {
         direction ? this.startDirectional(direction) : this.clearDirectional()
     }
     handleContextMenu = (e: MouseEvent) => {
-        this.autoHide && this.startHiddenTimeout(true)
+        this.autoHide && this.startShowTimeout()
         if (this.isAtCircle(extractClient(e))) {
             this.activateMovingMode()
             e.cancelable && e.preventDefault()
@@ -234,44 +257,70 @@ export class Circle extends Popover {
     isAtCircle = (xy: ReturnType<typeof extractClient>) => {
         if (this.hidden) return 
         let { clientX, clientY } = xy 
-        let x = this.x * 0.01 * window.innerWidth
-        let y = this.y * 0.01 * window.innerHeight
-        let aura = Math.max(this.size * (isMobile() ? 1.5 : 1.1 ), 30)
-
+        const circleXY = this.ref.getBoundingClientRect()
+        let x = circleXY.x + circleXY.width * 0.5
+        let y = circleXY.y + circleXY.height * 0.5
+        let half = 0.5 * (isMobile() ? 1.5 : 1.1)
+        if (isFirefoxMobile()) y += (window.visualViewport.height - window.innerHeight) / 2 
         if (
-            between(x - aura * 0.5, x + aura * 0.5, clientX) && 
-            between(y - aura * 0.5, y + aura * 0.5, clientY)
+            between(x - this.size * half, x + this.size * half, clientX) && 
+            between(y - this.size * half, y + this.size * half, clientY)
         ) return true 
         
     }
-    isAtDelete = (xy: ReturnType<typeof extractClient>, large?: boolean) => {
-        let size = large ? 120 : 60
-        let x = window.innerWidth * 0.5 - size / 2
-        let y = window.innerHeight * (this.conflictWithDelete ? 0.7 : 0.5) + 90 - size / 2
+    isAtDelete = (large?: boolean) => {
+        let circleBounds = this.ref.getBoundingClientRect()
+        let circleXY:  ReturnType<typeof extractClient> = {clientX: circleBounds.x + circleBounds.width * 0.5, clientY: circleBounds.y + circleBounds.height * 0.5}
+
+        let deleteBounds = this.delete.getBoundingClientRect()
+
+        let deleteX = deleteBounds.x + deleteBounds.width * 0.5
+        let deleteY = deleteBounds.y + deleteBounds.height * 0.5
+        let half = 0.5 * (large ? 3 : 1)
 
         if (
-            between(x, x + size, xy.clientX) && 
-            between(y, y + size, xy.clientY)
+            between(deleteX - deleteBounds.width * half, deleteX + deleteBounds.width * half, circleXY.clientX) && 
+            between(deleteY - deleteBounds.height * half, deleteY + deleteBounds.height * half, circleXY.clientY)
         ) return true 
+    }
+    doMain = () => {
+        this.init.mainAction === "PAUSE" ? this.togglePause() : this.toggleSpeed()
     }
     togglePause = async () => {
         let paused = !this.video.paused
         setPause(this.video, paused ? 'on' : 'off')
     }
+    toggleSpeed = async () => {
+        let speed = this.init.mainActionSpeed || 3  
+        const view = await fetchView({speed: true, lastSpeed: true}, gvar.tabInfo.tabId)
+        let lastSpeed = view.lastSpeed
+
+        if (view.speed?.toFixed(2) === speed.toFixed(2)) {
+            [speed, lastSpeed] = [view.lastSpeed, view.speed]
+        }
+
+        pushView({override: {speed, lastSpeed: view.speed}, tabId: gvar.tabInfo.tabId})
+        this.indicator.show({text: formatSpeed(speed)})
+    }
     handleDirectionalInterval = async () => {
-        if (!this.combo) this.clearDirectional() 
-        this.autoHide && this.startHiddenTimeout(true)
+        if (!this.combo) {
+            this.clearDirectional() 
+            return 
+        }
+        this.autoHide && this.startShowTimeout()
         this.combo.combo++
         let isVertical = this.direction === Direction.TOP || this.direction === Direction.BOTTOM
         let isNegative = this.direction === Direction.LEFT || this.direction === Direction.TOP
         this.circle.style.transform = `translate${(isVertical) ? 'Y' : 'X'}(${(isNegative) ? '-' : ''}${this.strong ? '40' : '20'}px)`
         this.circle.style.border = this.strong ? '5px solid red' : '5px solid white'
-        this.ref.style.display = "block"
+        this.ref.style.opacity = "1"
+
+        let direction = this.direction
 
         if (isVertical) {
             let delta = this.strong ? 0.25 : 0.1
-            const view = await fetchView({speed: true, lastSpeed: true}, gvar.tabInfo.tabId)
-            let speed = conformSpeed(roundTo(view.speed + (this.direction === Direction.TOP ? delta : -delta), delta))
+            const view = await fetchView({speed: true}, gvar.tabInfo.tabId)
+            let speed = conformSpeed(roundTo(view.speed + (direction === Direction.TOP ? delta : -delta), delta))
             pushView({override: {speed, lastSpeed: view.speed}, tabId: gvar.tabInfo.tabId})
             this.indicator.show({text: formatSpeed(speed)})
         } else {
@@ -284,16 +333,22 @@ export class Circle extends Popover {
         }
     }
     getDirection = (clientX: number, clientY: number): Direction => {
-         let originX = (this.x / 100) * window.innerWidth
-         let originY = (this.y / 100) * window.innerHeight
-         const deltaX = clientX - originX
-         const deltaY = clientY - originY
+        this.updateClientDimensions()
+        const circleXY = this.ref.getBoundingClientRect()
+        let x = circleXY.x + circleXY.width * 0.5
+        let y = circleXY.y + circleXY.height * 0.5
 
-         const distance = Math.sqrt(deltaX ** 2 + deltaY ** 2)
-         if (distance < MIN_TO_ACTIVATE) return
-         this.strong = distance > MIN_STRONG
-         
-         return (Math.abs(deltaX) > Math.abs(deltaY)) ? (deltaX >= 0 ? Direction.RIGHT : Direction.LEFT) : (deltaY >= 0 ? Direction.BOTTOM : Direction.TOP)
+        if (isFirefoxMobile()) y += (window.visualViewport.height - window.innerHeight) / 2 
+        
+        const deltaX = clientX - x
+        const deltaY = clientY - y
+
+        const distance = Math.sqrt(deltaX ** 2 + deltaY ** 2)
+
+        if (distance < MIN_TO_ACTIVATE) return 
+        this.strong = distance > MIN_STRONG
+        
+        return (Math.abs(deltaX) > Math.abs(deltaY)) ? (deltaX >= 0 ? Direction.RIGHT : Direction.LEFT) : (deltaY >= 0 ? Direction.BOTTOM : Direction.TOP)
     }
     clearDirectional = () => {
         if (this.direction) {
@@ -302,7 +357,7 @@ export class Circle extends Popover {
             delete this.leftCircle
             this.circle.style.transform = ''
             this.circle.style.border = '5px solid white'
-            this.ref.style.display = 'none'
+            this.ref.style.opacity = "0"
             clearInterval(this.directionalIntervalId); delete this.directionalIntervalId
         }
     }
@@ -319,9 +374,10 @@ export class Circle extends Popover {
         if (this.movingMode) return 
         this.indicator.show({text: 'Positioning', duration: 2000})
         this.movingMode = true 
-        this.conflictWithDelete = this.isAtDelete({clientX: this.x / 100 * window.innerWidth, clientY: this.y / 100 * window.innerHeight}, true)
+        if (this.delete.style.top) this.delete.style.top = null
+        this.conflictWithDelete = this.isAtDelete(true)
         this.circle.style.border = "5px solid yellow"
-        this.delete.style.display = "block"
+        this.delete.style.opacity = "0.75"
         this.delete.style.top = this.conflictWithDelete ? `calc(70vh + 60px)` : null
     }
     clearMovingMode = () => {
@@ -330,7 +386,7 @@ export class Circle extends Popover {
         this.movingMode = false 
         this.conflictWithDelete = false 
         this.circle.style.border = "5px solid white"
-        this.delete.style.display = "none"
+        this.delete.style.opacity = "0"
     }
     drawPosition = () => {
         this.circle.style.left = `calc(${this.x}vw - ${this.size / 2}px)`
@@ -352,8 +408,8 @@ enum Direction {
 
 function conformCircle(x: number, y: number, size: number) {
     if (!window.innerWidth) return {x, y}
-    let minWidth = size / window.innerWidth * 100 * 2
-    let minHeight = size / window.innerHeight * 100 * 2
+    let minWidth = size / window.visualViewport.width * 100 * 2
+    let minHeight = size / window.visualViewport.height * 100 * 2
     return {
         x: clamp(minWidth, 100 - minWidth, x), 
         y: clamp(minHeight, 100 - minHeight, y)
